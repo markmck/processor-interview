@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using ProcessorAPI.Data;
+using ProcessorAPI.Models;
 
 namespace ProcessorAPI.Controllers
 {
@@ -6,15 +8,17 @@ namespace ProcessorAPI.Controllers
     [Route("[controller]")]
     public class TransactionController : ControllerBase
     {
+        private readonly ProcessorDbContext _context;
+
+        public TransactionController(ProcessorDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public IEnumerable<Transaction> Get()
         {
-            // Example static data; replace with your data source
-            return new List<Transaction>
-            {
-                new Transaction { Id = 1, Date = DateTime.Now.AddDays(-2), Amount = 100.50m, Description = "Payment" },
-                new Transaction { Id = 2, Date = DateTime.Now.AddDays(-1), Amount = 250.00m, Description = "Refund" }
-            };
+            return _context.Transactions.ToList();
         }
     }
 }

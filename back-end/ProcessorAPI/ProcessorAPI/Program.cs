@@ -1,8 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using ProcessorAPI.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<ProcessorDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ProcessorDb")));
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

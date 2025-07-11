@@ -1,0 +1,6 @@
+@ProcessorAPI_HostAddress = http://localhost:5208
+
+GET {{ProcessorAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

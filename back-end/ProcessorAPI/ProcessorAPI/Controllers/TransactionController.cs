@@ -16,9 +16,35 @@ namespace ProcessorAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Transaction> Get()
+        public IEnumerable<Transaction> GetList()
         {
             return _context.Transactions.ToList();
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var transaction = _context.Transactions.Find(id);
+
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(transaction);
+        }
+
+        [HttpPut]
+        public IActionResult PutList([FromBody] List<Transaction> transactions)
+        {
+            if (transactions == null || transactions.Count == 0 || !ModelState.IsValid)
+            {
+                return BadRequest("Invalid transaction data.");
+            }
+
+            _context.Transactions.AddRange(transactions);
+            _context.SaveChanges();
+            return Ok();
         }
     }
 }

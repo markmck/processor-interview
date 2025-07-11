@@ -11,7 +11,7 @@ namespace ProcessorAPI.Models
         public int Id { get; set; }
 
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]

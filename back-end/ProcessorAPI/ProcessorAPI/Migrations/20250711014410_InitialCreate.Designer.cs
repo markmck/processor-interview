@@ -12,7 +12,7 @@ using ProcessorAPI.Data;
 namespace ProcessorAPI.Migrations
 {
     [DbContext(typeof(ProcessorDbContext))]
-    [Migration("20250711013935_InitialCreate")]
+    [Migration("20250711014410_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -41,7 +41,7 @@ namespace ProcessorAPI.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("nvarchar(16)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");

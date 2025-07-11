@@ -19,7 +19,7 @@ namespace ProcessorAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CardNumber = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false)
                 },
                 constraints: table =>
                 {

@@ -1,10 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using ProcessorAPI.Data;
+using ProcessorAPI.Data.Repositories;
+using ProcessorAPI.Interfaces.Repositories;
+using ProcessorAPI.Interfaces.Services;
+using ProcessorAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.InputFormatters.Add(new Microsoft.AspNetCore.Mvc.Formatters.XmlDataContractSerializerInputFormatter(options));
+    options.OutputFormatters.Add(new Microsoft.AspNetCore.Mvc.Formatters.XmlDataContractSerializerOutputFormatter());
+});
+
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 builder.Services.AddDbContext<ProcessorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ProcessorDb")));

@@ -1,6 +1,25 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
+﻿# Build results
+**/[Dd]ebug/
+**/bld/
+**/[Bb]in/
+**/[Oo]bj/
+**/[Ll]og/
 
-/back-end/ProcessorAPI/.vs/ProcessorAPI/CopilotIndices/*
-/back-end/ProcessorAPI/ProcessorAPI/bin/Debug/net9.0
+# Visual Studio
+.vs/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Node.js (for React frontend)
+node_modules/
+
+# React build
+build/
+dist/

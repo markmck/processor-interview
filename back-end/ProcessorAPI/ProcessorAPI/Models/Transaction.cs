@@ -17,6 +17,7 @@ namespace ProcessorAPI.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
 
+        // This should never go into a database and it irks me to keep it like this. It should be tokenized AT LEAST. But seeing this is a "quick" project, we're keeping it simple. We can tackle that next sprint. 
         [Required]
         [StringLength(16)]
         public string CardNumber { get; set; } = string.Empty;

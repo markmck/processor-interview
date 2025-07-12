@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ProcessorAPI.Data;
 using ProcessorAPI.Data.Repositories;
+using ProcessorAPI.Helpers;
+using ProcessorAPI.Interfaces.Helpers;
 using ProcessorAPI.Interfaces.Repositories;
 using ProcessorAPI.Interfaces.Services;
 using ProcessorAPI.Services;
@@ -19,6 +21,9 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<IJSONParser, JSONParser>();
+builder.Services.AddScoped<IXMLParser, XMLParser>();
+builder.Services.AddScoped<ICSVParser, CSVParser>();
 
 builder.Services.AddDbContext<ProcessorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ProcessorDb")));

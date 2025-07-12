@@ -1,4 +1,6 @@
-﻿using ProcessorAPI.Interfaces.Repositories;
+﻿using ProcessorAPI.Helpers;
+using ProcessorAPI.Interfaces.Helpers;
+using ProcessorAPI.Interfaces.Repositories;
 using ProcessorAPI.Interfaces.Services;
 using ProcessorAPI.Models;
 using ProcessorAPI.Models.Results;
@@ -9,14 +11,23 @@ namespace ProcessorAPI.Services
     public class TransactionService : ITransactionService
     {
         private readonly ITransactionRepository transactionRepository;
+        private readonly IJSONParser jsonParser;
+        private readonly IXMLParser xmlParser;
+        private readonly ICSVParser csvParser;
         private readonly ILogger<TransactionService> logger;
 
         public TransactionService(
-            ITransactionRepository transactionRepository,
-            ILogger<TransactionService> logger)
+            ITransactionRepository _transactionRepository,
+            IJSONParser _jsonParser,
+            IXMLParser _xmlParser,
+            ICSVParser _csvParser,
+            ILogger<TransactionService> _logger)
         {
-            this.transactionRepository = transactionRepository;
-            this.logger = logger;
+            this.transactionRepository = _transactionRepository;
+            this.jsonParser = _jsonParser;
+            this.xmlParser = _xmlParser;
+            this.csvParser = _csvParser;
+            this.logger = _logger;
         }
 
         public Task<IEnumerable<Transaction>> GetAllAsync()
@@ -38,11 +49,11 @@ namespace ProcessorAPI.Services
                     return new ProcessingResult { Success = false, ErrorMessage = "Input data cannot be empty" };
                 }
 
-                var transactions = contentType.ToLower() switch
+                List<Transaction> transactions = contentType.ToLower() switch
                 {
-                    var ct when ct.Contains("json") => ParseJsonTransactions(data),
-                    var ct when ct.Contains("xml") => ParseXmlTransactions(data),
-                    var ct when ct.Contains("csv") => ParseCsvTransactions(data),
+                    var ct when ct.Contains("json") => jsonParser.ParseJSONTransactions(data),
+                    var ct when ct.Contains("xml") => xmlParser.ParseXMLTransactions(data),
+                    var ct when ct.Contains("csv") => csvParser.ParseCSVTransactions(data),
                     _ => throw new NotSupportedException($"Content type '{contentType}' is not supported")
                 };
 
@@ -59,37 +70,6 @@ namespace ProcessorAPI.Services
                 logger.LogError(ex, "Error processing transactions");
                 return new ProcessingResult { Success = false, ErrorMessage = $"Processing failed: {ex.Message}" };
             }
-        }
-
-        //TODO: Move this to parser class
-        private List<Transaction> ParseJsonTransactions(string jsonData)
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                AllowTrailingCommas = true
-            };
-
-            try
-            {
-                return JsonSerializer.Deserialize<List<Transaction>>(jsonData, options)
-                    ?? new List<Transaction>();
-            }
-            catch (JsonException)
-            {
-                var single = JsonSerializer.Deserialize<Transaction>(jsonData, options);
-                return single != null ? new List<Transaction> { single } : new List<Transaction>();
-            }
-        }
-
-        private List<Transaction> ParseXmlTransactions(string xmlData)
-        {
-            throw new NotImplementedException("XML parsing not yet implemented");
-        }
-
-        private List<Transaction> ParseCsvTransactions(string csvData)
-        {
-            throw new NotImplementedException("XML parsing not yet implemented");
         }
     }
 }

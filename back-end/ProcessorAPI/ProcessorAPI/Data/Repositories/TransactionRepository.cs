@@ -23,12 +23,12 @@ namespace ProcessorAPI.Data.Repositories
             return await _context.Transactions.FindAsync(id);
         }
 
-        public async Task<bool> AddRangeAsync(IEnumerable<Transaction> transactions)
+        public async Task<int> AddRangeAsync(IEnumerable<Transaction> transactions)
         {
             _context.Transactions.AddRange(transactions);
             var result = await _context.SaveChangesAsync();
 
-            return result > 0;
+            return result;
         }
     }
 }

@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+
 using ProcessorAPI.Interfaces.Services;
 using ProcessorAPI.Models;
+using ProcessorAPI.Models.Results;
+using System.Text;
 
 namespace ProcessorAPI.Controllers
 {
@@ -34,36 +37,68 @@ namespace ProcessorAPI.Controllers
             return Ok(transaction);
         }
 
-        [HttpPut("upload")]
-        public async Task<IActionResult> PutData([FromBody] List<Transaction> transactions)
+        [HttpPost("upload")]
+        [Consumes("application/json", "application/xml", "text/xml", "text/csv", "application/csv")]
+        public async Task<IActionResult> PostData()
         {
             var contentType = Request.ContentType?.ToLower();
-            bool result = false;
 
-            if (contentType?.Contains("xml") == true)
+            if (string.IsNullOrWhiteSpace(contentType))
             {
-                result = await transactionService.HandleXmlUpload(transactions);
-            }
-            else if (contentType?.Contains("csv") == true)
-            {
-                result = await transactionService.HandleCsvUpload(transactions);
-            }
-            else if (contentType?.Contains("json") == true)
-            {
-                result = await transactionService.HandleJsonUpload(transactions);
-            }
-            else
-            {
-                return BadRequest("Unsupported content type. Use application/json, application/xml, or text/csv");
+                return BadRequest(new ValidationProblemDetails
+                {
+                    Status = 400,
+                    Title = "Invalid Content Type",
+                    Detail = "Content-Type header is missing or invalid",
+                    Instance = HttpContext.Request.Path
+                });
             }
 
-            if (result)
+            try
             {
-                return Ok("Upload successful");
+                string rawData;
+                using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
+                {
+                    rawData = await reader.ReadToEndAsync();
+                }
+
+                var result = await transactionService.ProcessTransactionsAsync(rawData, contentType);
+
+                if (result.Success)
+                {
+                    var response = new
+                    {
+                        Message = "Transactions created successfully",
+                        Count = result.ProcessedCount,
+                    };
+
+                    return Created($"{Request.Path}", response);
+                }
+                else
+                {
+                    return StatusCode(500, "Upload failed");
+                }
             }
-            else
+            catch (FormatException ex)
             {
-                return StatusCode(500, "Upload failed");
+                return BadRequest(new ValidationProblemDetails
+                {
+                    Status = 400,
+                    Title = "Invalid Format",
+                    Detail = $"The provided data is not in valid {contentType} format: {ex.Message}",
+                    Instance = HttpContext.Request.Path
+                });
+            }
+            catch (Exception ex)
+            {
+                //TODO: Log the exception here
+                return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails
+                {
+                    Status = 500,
+                    Title = "Internal Server Error",
+                    Detail = "An unexpected error occurred while processing the request",
+                    Instance = HttpContext.Request.Path
+                });
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using ProcessorAPI.Models;
+using ProcessorAPI.Models.Results;
 
 namespace ProcessorAPI.Interfaces.Services
 {
@@ -6,8 +7,6 @@ namespace ProcessorAPI.Interfaces.Services
     {
         Task<IEnumerable<Transaction>> GetAllAsync();
         Task<Transaction?> GetByIdAsync(int id);
-        Task<bool> HandleXmlUpload(IEnumerable<Transaction> transactions);
-        Task<bool> HandleCsvUpload(IEnumerable<Transaction> transactions);
-        Task<bool> HandleJsonUpload(IEnumerable<Transaction> transactions);
+        Task<ProcessingResult> ProcessTransactionsAsync(string data, string contentType);
     }
 }

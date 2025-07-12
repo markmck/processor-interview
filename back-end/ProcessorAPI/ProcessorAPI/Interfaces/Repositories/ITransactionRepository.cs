@@ -6,6 +6,6 @@ namespace ProcessorAPI.Interfaces.Repositories
     {
         Task<IEnumerable<Transaction>> GetAllAsync();
         Task<Transaction?> GetByIdAsync(int id);
-        Task<bool> AddRangeAsync(IEnumerable<Transaction> transactions);
+        Task<int> AddRangeAsync(IEnumerable<Transaction> transactions);
     }
 }

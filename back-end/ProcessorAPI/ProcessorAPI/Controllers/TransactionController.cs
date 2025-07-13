@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 using ProcessorAPI.Interfaces.Services;
@@ -8,7 +9,8 @@ using System.Text;
 namespace ProcessorAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class TransactionController : ControllerBase
     {
         ITransactionService transactionService;

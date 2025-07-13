@@ -3,6 +3,7 @@ using ProcessorAPI.Interfaces.Helpers;
 using ProcessorAPI.Interfaces.Repositories;
 using ProcessorAPI.Interfaces.Services;
 using ProcessorAPI.Models;
+using ProcessorAPI.Models.Enums;
 using ProcessorAPI.Models.Results;
 using System.Text.Json;
 
@@ -14,6 +15,7 @@ namespace ProcessorAPI.Services
         private readonly IJSONParser jsonParser;
         private readonly IXMLParser xmlParser;
         private readonly ICSVParser csvParser;
+        private readonly ITransactionValidator transactionValidator;
         private readonly ILogger<TransactionService> logger;
 
         public TransactionService(
@@ -21,12 +23,14 @@ namespace ProcessorAPI.Services
             IJSONParser _jsonParser,
             IXMLParser _xmlParser,
             ICSVParser _csvParser,
+            ITransactionValidator _transactionValidator,
             ILogger<TransactionService> _logger)
         {
             this.transactionRepository = _transactionRepository;
             this.jsonParser = _jsonParser;
             this.xmlParser = _xmlParser;
             this.csvParser = _csvParser;
+            this.transactionValidator = _transactionValidator;
             this.logger = _logger;
         }
 
@@ -56,6 +60,22 @@ namespace ProcessorAPI.Services
                     var ct when ct.Contains("csv") => csvParser.ParseCSVTransactions(data),
                     _ => throw new NotSupportedException($"Content type '{contentType}' is not supported")
                 };
+
+                foreach (var transaction in transactions)
+                {
+                    var validationResult = transactionValidator.Validate(transaction);
+
+                    if (validationResult.IsValid)
+                    {
+                        transaction.Status = TransactionStatus.Accepted;
+                        transaction.CardType = validationResult.CardType;
+                    }
+                    else
+                    {
+                        transaction.Status = TransactionStatus.Rejected;
+                        transaction.CardType = CardType.Invalid;
+                    }
+                }
 
                 var results = await transactionRepository.AddRangeAsync(transactions);
 

@@ -1,4 +1,5 @@
 
+using ProcessorAPI.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,5 +22,9 @@ namespace ProcessorAPI.Models
         [Required]
         [StringLength(16)]
         public string CardNumber { get; set; } = string.Empty;
+
+        public CardType CardType { get; set; }
+
+        public TransactionStatus Status { get; set; }
     }
 }

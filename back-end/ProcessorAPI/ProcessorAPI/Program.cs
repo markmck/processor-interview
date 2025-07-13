@@ -24,6 +24,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IJSONParser, JSONParser>();
 builder.Services.AddScoped<IXMLParser, XMLParser>();
 builder.Services.AddScoped<ICSVParser, CSVParser>();
+builder.Services.AddScoped<ITransactionValidator, TransactionValidator>();
 
 builder.Services.AddDbContext<ProcessorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ProcessorDb")));

@@ -20,6 +20,17 @@ builder.Services.AddControllers(options =>
     options.OutputFormatters.Add(new Microsoft.AspNetCore.Mvc.Formatters.XmlDataContractSerializerOutputFormatter());
 });
 
+// Add CORS only for development/debugging
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddApiVersioning(options =>
 {
     options.AssumeDefaultVersionWhenUnspecified = true;
@@ -68,12 +79,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    //Configure Swagger
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "Card Processor API v1");
         options.RoutePrefix = "swagger";
     });
+
+    //Allow all connections for development env
+    app.UseCors("AllowAll");
 }
 
 app.UseHttpsRedirection();

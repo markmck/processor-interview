@@ -1,9 +1,9 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using ProcessorAPI.Interfaces.Services;
 using ProcessorAPI.Models;
-using ProcessorAPI.Models.Results;
 using System.Text;
 
 namespace ProcessorAPI.Controllers
@@ -11,11 +11,12 @@ namespace ProcessorAPI.Controllers
     [ApiController]
     [Route("v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    public class TransactionController : ControllerBase
+    [Authorize]
+    public class TransactionsController : ControllerBase
     {
         ITransactionService transactionService;
 
-        public TransactionController(ITransactionService _transactionService)
+        public TransactionsController(ITransactionService _transactionService)
         {
             transactionService = _transactionService;
         }

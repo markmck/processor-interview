@@ -25,10 +25,19 @@ namespace ProcessorAPI.Data.Repositories
 
         public async Task<int> AddRangeAsync(IEnumerable<Transaction> transactions)
         {
-            _context.Transactions.AddRange(transactions);
-            var result = await _context.SaveChangesAsync();
-
-            return result;
+            using var dbTransaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                _context.Transactions.AddRange(transactions);
+                var result = await _context.SaveChangesAsync();
+                await dbTransaction.CommitAsync();
+                return result;
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

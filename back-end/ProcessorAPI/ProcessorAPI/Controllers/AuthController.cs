@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -6,6 +7,9 @@ using System.Text;
 
 namespace ProcessorAPI.Controllers
 {
+    [ApiController]
+    [Route("v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class AuthController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -15,7 +19,7 @@ namespace ProcessorAPI.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("login")]
+        [HttpPost]
         public IActionResult Login()
         {
             var token = GenerateJwtToken("some-super-cool-temp-username-that-will-be-replaced-with-actual-user-creds-eventually");

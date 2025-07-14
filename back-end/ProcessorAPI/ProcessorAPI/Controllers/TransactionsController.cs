@@ -40,7 +40,7 @@ namespace ProcessorAPI.Controllers
             return Ok(transaction);
         }
 
-        [HttpPost("upload")]
+        [HttpPost]
         [Consumes("application/json", "application/xml", "text/xml", "text/csv", "application/csv")]
         public async Task<IActionResult> PostData()
         {

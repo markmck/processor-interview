@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 using ProcessorAPI.Interfaces.Services;
 using ProcessorAPI.Models;
+using ProcessorAPI.Models.DTOs;
+using ProcessorAPI.Models.Enums;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Text;
 
 namespace ProcessorAPI.Controllers
@@ -15,34 +18,44 @@ namespace ProcessorAPI.Controllers
     public class TransactionsController : ControllerBase
     {
         ITransactionService transactionService;
+        ILogger<TransactionsController> logger;
 
-        public TransactionsController(ITransactionService _transactionService)
+        public TransactionsController(ITransactionService _transactionService, ILogger<TransactionsController> _logger)
         {
             transactionService = _transactionService;
+            this.logger = _logger;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Transaction>> GetList()
+        [SwaggerOperation(
+            Summary = "Get filtered transactions",
+            Description = "Retrieves a paginated list of transactions with optional filtering by card type, status, and date range"
+        )]
+        [ProducesResponseType(typeof(IEnumerable<Transaction>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IEnumerable<Transaction>> GetList(
+            [FromQuery] CardType? cardType = null,
+            [FromQuery] TransactionStatus? status = null,
+            [FromQuery] DateTime? fromDate = null,
+            [FromQuery] DateTime? toDate = null
+        )
         {
-            return await transactionService.GetAllAsync();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var transaction = await transactionService.GetByIdAsync(id);
-
-            if (transaction == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(transaction);
+            return await transactionService.GetAllAsync(cardType, status, fromDate, toDate);
         }
 
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Upload transaction data",
+            Description = "Processes and stores transaction data from JSON, XML, or CSV format"
+        )]
         [Consumes("application/json", "application/xml", "text/xml", "text/csv", "application/csv")]
-        public async Task<IActionResult> PostData()
+        [ProducesResponseType(typeof(UploadResponseDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<UploadResponseDTO>> PostData()
         {
             var contentType = Request.ContentType?.ToLower();
 
@@ -69,17 +82,24 @@ namespace ProcessorAPI.Controllers
 
                 if (result.Success)
                 {
-                    var response = new
+                    var response = new UploadResponseDTO
                     {
-                        Message = "Transactions created successfully",
+                        Message = "Transactions processed successfully",
                         Count = result.ProcessedCount,
+                        ProcessedAt = DateTime.UtcNow
                     };
 
-                    return Created($"{Request.Path}", response);
+                    return CreatedAtAction(nameof(GetList), response);
                 }
                 else
                 {
-                    return StatusCode(500, "Upload failed");
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails
+                    {
+                        Title = "Processing Failed",
+                        Detail = result.ErrorMessage ?? "Transaction processing failed",
+                        Status = StatusCodes.Status500InternalServerError,
+                        Instance = HttpContext.Request.Path
+                    });
                 }
             }
             catch (FormatException ex)
@@ -94,7 +114,7 @@ namespace ProcessorAPI.Controllers
             }
             catch (Exception ex)
             {
-                //TODO: Log the exception here
+                logger.LogError(ex, "Error processing transactions");
                 return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails
                 {
                     Status = 500,

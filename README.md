@@ -1,3 +1,32 @@
+## 🚀 Getting Started
+
+To run this project, you'll need:
+
+- [.NET SDK (C#)](https://dotnet.microsoft.com/download)
+- [Node.js & npm](https://nodejs.org/)
+
+### Backend
+
+1. Open the solution in Visual Studio.
+2. Build and run the backend project.
+3. The API will start and listen on the configured port.
+4. If using swagger, use the Auth endpoint to request a JWT and add that as a bearer token via the "Authorize" button at the top
+
+### Frontend
+
+1. Navigate to the frontend directory in your terminal.
+2. Run `npm install` to install dependencies.
+3. Start the development server with `npm run dev`.
+4. Open [http://localhost:5173](http://localhost:5173) in Chrome.
+
+---
+
+**Notes:**  
+-- I did not implement any reporting. The data is all there and there just needs to be a reporting controller added.
+-- The database is far from normalized. The cc data is stored in plain text and there's only one table
+-- Authorization is extremely basic, the app generates a JWT with an expiration date but no user creds are required. 
+-- These all seemed like valid decisions to me based on the time that was needed to complete the assignment.
+
 # Card Processor
 
 Thank you for taking a the time to complete our interview code project. We realize that there are many ways to conduct the "technical part" of the interview process from L33T code tests to whiteboards, and each has its own respective pros / cons. We intentionally chose the take-home project approach because we believe it gives you the best chance to demonstrate your skills and knowledge in a "normal environment" - i.e. your computer, keyboard, and IDE.

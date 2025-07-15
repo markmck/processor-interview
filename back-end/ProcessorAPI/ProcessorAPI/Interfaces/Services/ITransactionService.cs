@@ -7,7 +7,9 @@ namespace ProcessorAPI.Interfaces.Services
 {
     public interface ITransactionService
     {
-        Task<IEnumerable<Transaction>> GetAllAsync(CardType? cardType = null,
+        Task<IEnumerable<Transaction>> GetAllAsync(
+            string? cardNumber = null,
+            CardType? cardType = null,
             TransactionStatus? status = null,
             DateTime? fromDate = null,
             DateTime? toDate = null);

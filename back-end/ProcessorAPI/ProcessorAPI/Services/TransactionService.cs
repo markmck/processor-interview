@@ -34,9 +34,9 @@ namespace ProcessorAPI.Services
             this.logger = _logger;
         }
 
-        public Task<IEnumerable<Transaction>> GetAllAsync(CardType? cardType = null, TransactionStatus? status = null, DateTime? fromDate = null, DateTime? toDate = null)
+        public Task<IEnumerable<Transaction>> GetAllAsync(string? cardNumber = null, CardType? cardType = null, TransactionStatus? status = null, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            return transactionRepository.GetAllAsync(cardType, status, fromDate, toDate);
+            return transactionRepository.GetAllAsync(cardNumber, cardType, status, fromDate, toDate);
         }
 
         public async Task<ProcessingResult> ProcessTransactionsAsync(string data, string contentType)

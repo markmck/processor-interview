@@ -19,9 +19,12 @@ namespace ProcessorAPI.Data.Repositories
             return await _context.Transactions.ToListAsync();
         }
 
-        public async Task<IEnumerable<Transaction>> GetAllAsync(CardType? cardType = null, TransactionStatus? status = null, DateTime? fromDate = null, DateTime? toDate = null)
+        public async Task<IEnumerable<Transaction>> GetAllAsync(string? cardNumber = null, CardType? cardType = null, TransactionStatus? status = null, DateTime? fromDate = null, DateTime? toDate = null)
         {
             var query = _context.Transactions.AsNoTracking().AsQueryable();
+
+            if(!string.IsNullOrEmpty(cardNumber))
+                query = query.Where(t => t.CardNumber == cardNumber);
 
             if (cardType.HasValue)
                 query = query.Where(t => t.CardType == cardType.Value);
@@ -36,11 +39,6 @@ namespace ProcessorAPI.Data.Repositories
                 query = query.Where(t => t.TimeStamp <= toDate.Value);
 
             return await query.ToListAsync();
-        }
-
-        public async Task<Transaction?> GetByIdAsync(int id)
-        {
-            return await _context.Transactions.FindAsync(id);
         }
 
         public async Task<int> AddRangeAsync(IEnumerable<Transaction> transactions)

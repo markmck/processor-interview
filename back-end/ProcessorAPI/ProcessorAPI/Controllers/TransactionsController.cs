@@ -36,13 +36,14 @@ namespace ProcessorAPI.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IEnumerable<Transaction>> GetList(
+            [FromQuery] string? cardNumber= null,
             [FromQuery] CardType? cardType = null,
             [FromQuery] TransactionStatus? status = null,
             [FromQuery] DateTime? fromDate = null,
             [FromQuery] DateTime? toDate = null
         )
         {
-            return await transactionService.GetAllAsync(cardType, status, fromDate, toDate);
+            return await transactionService.GetAllAsync(cardNumber, cardType, status, fromDate, toDate);
         }
 
         [HttpPost]

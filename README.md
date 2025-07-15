@@ -22,10 +22,16 @@ To run this project, you'll need:
 ---
 
 **Notes:**  
--- I did not implement any reporting. The data is all there and there just needs to be a reporting controller added.
--- The database is far from normalized. The cc data is stored in plain text and there's only one table
--- Authorization is extremely basic, the app generates a JWT with an expiration date but no user creds are required. 
--- These all seemed like valid decisions to me based on the time that was needed to complete the assignment.
+-- I did not implement any reporting in the front end. The transactions controller is set up to return data for the reporting, however I was unclear on the requirements of a "summary" and would like to discuss further before implementing. 
+
+**TODOs**
+-- Database should be normalized
+-- Auth with user authentication should be implemented
+-- CC data should be hashed and stored in seperate database, then referenced with guids or some other identifier. nothing should use or report on the raw card number
+-- Reporting needs to be added to the front end (see above "Notes")
+-- Pagination should be added to transaction list view/controller
+-- Batching could be added to transaction upload if processing large amounts of data (100k+ records)
+
 
 # Card Processor
 

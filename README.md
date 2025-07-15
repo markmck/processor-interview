@@ -22,15 +22,15 @@ To run this project, you'll need:
 ---
 
 **Notes:**  
--- I did not implement any reporting in the front end. The transactions controller is set up to return data for the reporting, however I was unclear on the requirements of a "summary" and would like to discuss further before implementing. 
+- I did not implement any reporting in the front end. The transactions controller is set up to return data for the reporting, however I was unclear on the requirements of a "summary" and would like to discuss further before implementing. 
 
 **TODOs**
--- Database should be normalized
--- Auth with user authentication should be implemented
--- CC data should be hashed and stored in seperate database, then referenced with guids or some other identifier. nothing should use or report on the raw card number
--- Reporting needs to be added to the front end (see above "Notes")
--- Pagination should be added to transaction list view/controller
--- Batching could be added to transaction upload if processing large amounts of data (100k+ records)
+- Database should be normalized
+- Auth with user authentication should be implemented
+- CC data should be hashed and stored in seperate database, then referenced with guids or some other identifier. nothing should use or report on the raw card number
+- Reporting needs to be added to the front end (see above "Notes")
+- Pagination should be added to transaction list view/controller
+- Batching could be added to transaction upload if processing large amounts of data (100k+ records)
 
 
 # Card Processor

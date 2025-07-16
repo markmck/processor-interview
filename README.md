@@ -4,6 +4,7 @@ To run this project, you'll need:
 
 - [.NET SDK (C#)](https://dotnet.microsoft.com/download)
 - [Node.js & npm](https://nodejs.org/)
+- [Visual Studio](https://visualstudio.microsoft.com/downloads/)
 
 ### Backend
 
@@ -33,6 +34,7 @@ To run this project, you'll need:
 - Batching transactions could be added to transaction upload if processing large amounts of data (100k+ records)
 - Tests should be added to the backend and frontend
 - Frontend should be responsive and accessible
+- Componetize the frontend further to allow for easier reuse and testing
 
 
 

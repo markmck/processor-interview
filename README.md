@@ -35,6 +35,7 @@ To run this project, you'll need:
 - Tests should be added to the backend and frontend
 - Frontend should be responsive and accessible
 - Componetize the frontend further to allow for easier reuse and testing
+- Add pk checking to backend to ensure no duplicate transactions are processed
 
 
 
